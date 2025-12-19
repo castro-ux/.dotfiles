@@ -13,11 +13,11 @@ Built for Arch Linux.
 ---
 
 <p align="center">
-  <img src="screenshots/desktop.png" width="900">
+  <img src="screenshots/screen_lock.png" width="900">
 </p>
 
 <p align="center">
-  <img src="screenshots/lockscreen.png" width="900">
+  <img src="screenshots/dmenu.png" width="900">
 </p>
 
 ---
