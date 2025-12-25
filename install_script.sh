@@ -1,121 +1,89 @@
 #!/bin/bash
+set -e
 
-# --- CONFIGURATION ---
-TEST_MODE=false # Set to false to allow the script to actually run
-# ---------------------
+# --- TOGGLE THIS TO RUN ---
+DRY_RUN=true # Set to false to actually install
 
-# 0. Detect Package Manager and Update System
-if command -v pacman &> /dev/null; 
-then
-distro_cmd="pacman"
-pkg_ins="sudo pacman -S --noconfirm"
-update_cmd="sudo pacman -Syu --noconfirm"
-elif command -v apt &> /dev/null; 
-then
-distro_cmd="apt"
-pkg_ins="sudo apt install -y"
-update_cmd="sudo apt update && sudo apt upgrade -y"
-elif command -v apk &> /dev/null;
-then
-distro_cmd="apk"
-pkg_ins="sudo apk add"
-sudo sed -i 's/#//g' /etc/apk/repositories
-update_cmd="sudo apk update && sudo apk upgrade"
+# --- LOGGING ---
+release_file=/etc/os-release
+
+# --- DETECT OS ---
+# Fixed: Added '!' (not) and changed $release to $release_file
+if ! grep -qi "Arch" "$release_file"; then
+    echo "This script is for Arch Linux only."
+    exit 1
 fi
+echo "Arch Linux detected"
 
+# --- PACKAGES TO INSTALL ---
+PACKAGES=(
+    hyprland
+    hyprpaper
+    hypridle
+    hyprlock 
+    stow
+    ttf-jetbrains-mono-nerd 
+    github-cli 
+    tmux 
+    neovim 
+    libreoffice-fresh 
+    tree 
+    gimp 
+    qutebrowser 
+    zsh 
+    git 
+    unzip
+    brave-bin
+)
 
-# 1. Arch-Specific: Hyprland & Stow Dotfiles
-if [ "$distro_cmd" = "pacman" ]; then
-if [ "$TEST_MODE" = false ]; then
-install_pkg "hyprlock"
-install_pkg "hyprpaper"
-install_pkg "hypridle"
-install_pkg "stow"
-
-DOT_DIR="$HOME/.dotfiles"
-if [ ! -d "$DOT_DIR" ]; then
-git clone https://github.com/castro-ux/.dotfiles "$DOT_DIR"
-fi
-
-# Stow logic: Symlinks repo files to config folders
-cd "$DOT_DIR" || exit
-stow .
-cd - || exit
+# --- EXECUTE INSTALLATION ---
+if [ ${#PACKAGES[@]} -gt 0 ]; then
+    echo "Installing packages.."
+    if [ "$DRY_RUN" = true ]; then
+        echo "[DRY-RUN] sudo pacman -S --noconfirm ${PACKAGES[*]}"
+    else
+        sudo pacman -S --noconfirm "${PACKAGES[@]}"
+    fi
 else
-echo "[DRY RUN] Would install hypr suite, clone dotfiles, and run 'stow .'"
+    echo "No packages to install.."
 fi
-fi
 
-
-
-# 2. Universal Install Function with "Skip" Logic
-install_pkg() {
-local pkg=$1
-
-# Check if the package is already installed
-case "$distro_cmd" in
-"pacman") pacman -Qi "$pkg" &> /dev/null ;;
-"apt") dpkg -s "$pkg" &> /dev/null ;;
-"apk") apk info -e "$pkg" &> /dev/null ;;
-esac
-
-if [ $? -eq 0 ]; then
-echo "[SKIPPING]: $pkg is already installed."
+# --- CONFIGURATION SETUP ---
+echo "Setting up user configs.."
+if [ "$DRY_RUN" = true ]; then
+    echo "[DRY-RUN] mkdir -p ~/.config/hypr ~/.oh-my-zsh ~/.local/share/fonts/JetBrainsMono && cp /path/to/your/configs/* ~/.config/hypr/"
 else
-if [ "$TEST_MODE" = true ]; then
-echo "[DRY RUN]: Would install $pkg"
+    mkdir -p ~/.config/hypr ~/.oh-my-zsh ~/.local/share/fonts/JetBrainsMono
+    cp /path/to/your/configs/* ~/.config/hypr/
+    # You can modify this to copy specific config files or to clone repos, etc.
+fi
+
+# --- FONT CACHE ---
+echo "Rebuilding font cache.."
+if [ "$DRY_RUN" = true ]; then
+    echo "[DRY-RUN] fc-cache -f"
 else
-echo "[INSTALLING]: $pkg..."
-case "$distro_cmd" in
-"pacman") sudo pacman -S --noconfirm "$pkg" ;;
-"apt") sudo apt install -y "$pkg" ;;
-"apk") sudo apk add "$pkg" ;;
-esac
-fi
-fi
-}
-
-# 3. Universal Packages (All Distros)
-APPS=(hyprland ttf-jetbrains-mono-nerd github-cli tmux neovim libreoffice tree gimp qutebrowser zsh git unzip curl)
-
-# 4. Confirmation Logic
-if [ "$TEST_MODE" = false ]; then
-echo "!!! INSTALLATION INITIALIZING !!!"
-echo "This will install: ${APPS[*]}"
-[ "$distro_cmd" = "pacman" ] && echo "Plus: Hyprland suite, Stow, and JetBrains Mono Nerd Font."
-
-echo -n "Proceed? (type 'yes'): "
-read -r confirmation
-if [ "$confirmation" != "yes" ]; then
-echo "Installation cancelled."
-exit 0
-fi
+    fc-cache -f
 fi
 
-# 5. Execution: Updates and Universal Apps
-if [ "$TEST_MODE" = false ]; then
-eval "$update_cmd"
-for app in "${APPS[@]}"; do
-install_pkg "$app"
-done
-# OhMyZsh Unattended
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+# --- STOW CONFIGURATION ---
+echo "Stowing configurations.."
+if [ "$DRY_RUN" = true ]; then
+    echo "[DRY-RUN] cd ~/.config/ && cp -rf ~/.dotfiles/hypr/.config/. ~/.config/hypr && stow hypr"
 else
-echo "[DRY RUN] Would update system and install: ${APPS[*]}"
+    cd ~/.config/ || exit 1
+    cp -rf ~/.dotfiles/hypr/.config/. ~/.config/hypr
+    stow hypr
 fi
 
-# 6. Post-Install Configs (Nvim Relative Numbers & Shell)
-if [ "$TEST_MODE" = false ];
-then
-echo "Applying Neovim and Shell configurations..."
-
-# Change Shell to ZSH
-ZSH_PATH=$(which zsh)
-[ "$distro_cmd" = "apk" ] && sudo apk add shadow
-sudo chsh -s "$ZSH_PATH" "$USER"
-
-# Refresh Font Cache
-fc-cache -fv
-
-echo "Success! Installation complete."
+# --- CLEANUP ---
+echo "Cleaning up unnecessary packages.."
+if [ "$DRY_RUN" = true ]; then
+    echo "[DRY-RUN] sudo pacman -Rns --noconfirm \$(pacman -Qtdq)"
+else
+    # Uses || true so the script doesn't crash if there are no orphans
+    sudo pacman -Rns --noconfirm $(pacman -Qtdq) || true
 fi
+
+echo "Install Finished." 
+echo "DRY_RUN=$DRY_RUN"
