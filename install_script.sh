@@ -76,22 +76,28 @@ else
 fi
 
 
-# --- CONFIGURATION SETUP ---
-echo "Setting up user configs.."
+--- CONFIGURATION SETUP ---
+# Ensure we are in the dotfiles directory
+cd ~/.dotfiles
+
+echo "Setting up user configs with GNU Stow..."
+
 if [ "$DRY_RUN" = true ]; then
-    echo "[DRY-RUN] mkdir -p ~/.config/hypr ~/.oh-my-zsh ~/.local/share/fonts/JetBrainsMono && cp -rf ~/.dotfiles/* ~/.config/*"
-    echo "[DRY-RUN] stow --ignore='README.md' hypr"
-    echo "[DRY-RUN] stow --ignore='README.md' alacritty"
+    echo "[DRY-RUN] stow -vt ~ hypr"
+    echo "[DRY-RUN] stow -vt ~ alacritty"
 else
-    # Actual actions (without DRY-RUN)
-    mkdir -p ~/.config/hypr ~/.config/alacritty
-    #cp -rf ~/.dotfiles/hypr ~/.config/hypr
-    #cp -rf ~/.dotfiles/alacritty ~/.config/alacritty
+    # 1. Ensure the parent .config exists (Stow needs a base to hook into)
+    mkdir -p ~/.config
     
-    # Use stow with --ignore to prevent README.md files from being stowed
-    stow hypr
-    stow alacritty
+    # 2. Use stow with the -R (restow) flag. 
+    # This unlinks old links and creates new ones, which helps fix "messes".
+    # -v: Verbose (tells you what it's doing)
+    # -t ~: Targets the home directory explicitly
+    
+    stow -vRt ~ hypr
+    stow -vRt ~ alacritty
 fi
+
 
 
 # --- FONT CACHE ---
