@@ -35,6 +35,17 @@ PACKAGES=(
     unzip
 )
 
+# --- CHECK IF PACKAGES ARE INSTALLED ---
+echo "Checking installed packages..."
+for package in "${PACKAGES[@]}"; do
+    if pacman -Q "$package" &>/dev/null; then
+        echo "Package '$package' is already installed. Skipping."
+    else
+        echo "Package '$package' is not installed. Will install."
+        packages_to_install+=("$package")
+    fi
+done
+
 # --- EXECUTE INSTALLATION ---
 if [ ${#PACKAGES[@]} -gt 0 ]; then
     echo "Installing packages.."
@@ -80,7 +91,8 @@ if [ "$DRY_RUN" = true ]; then
 else
     # Actual actions (without DRY-RUN)
     mkdir -p ~/.config/hypr ~/.oh-my-zsh ~/.local/share/fonts/JetBrainsMono
-    cp -rf ~/.dotfiles/* ~/.config/
+    cp -rf ~/.dotfiles/hypr/.config/. ~/.config/hypr
+    cp -rf ~/.dotfiles/alacritty/.config/. ~/.config/alacritty
     stow hypr
     stow alacritty
 fi
