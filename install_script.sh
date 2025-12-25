@@ -66,14 +66,18 @@ else
     fc-cache -f
 fi
 
-# --- STOW CONFIGURATION ---
-echo "Stowing configurations.."
+# --- CONFIGURATION SETUP ---
+echo "Setting up user configs.."
 if [ "$DRY_RUN" = true ]; then
-    echo "[DRY-RUN] cd ~/.config/ && cp -rf ~/.dotfiles/hypr/.config/. ~/.config/hypr && stow hypr"
+    echo "[DRY-RUN] mkdir -p ~/.config/hypr ~/.oh-my-zsh ~/.local/share/fonts/JetBrainsMono && cp -rf ~/.dotfiles/* ~/.config/*"
+    echo "[DRY-RUN] stow hypr"
+    echo "[DRY-RUN] stow alacritty"
 else
-    cd ~/.config/ || exit 1
-    cp -rf ~/.dotfiles/hypr/.config/. ~/.config/hypr
+    # Actual actions (without DRY-RUN)
+    mkdir -p ~/.config/hypr ~/.oh-my-zsh ~/.local/share/fonts/JetBrainsMono
+    cp -rf ~/.dotfiles/* ~/.config/
     stow hypr
+    stow alacritty
 fi
 
 # --- CLEANUP ---
