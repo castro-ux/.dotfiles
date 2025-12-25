@@ -31,9 +31,7 @@ PACKAGES=(
     gimp 
     qutebrowser 
     zsh 
-    git 
     unzip
-    brave-bin
 )
 
 # --- EXECUTE REMOVAL ---
