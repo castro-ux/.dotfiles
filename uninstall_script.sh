@@ -6,63 +6,78 @@ DRY_RUN=true #set to false to actually uninstall
 
 # --- LOGGING ---
 release_file=/etc/os-release
-# logfile=/var/log/uninstaller.log
-# errorlog=/var/log/uninstaller_errors.log
 
-#Detect OS
-if grep -qi "Arch" "$release";
-then
+# --- DETECT OS ---
+# Fixed: Added '!' (not) and changed $release to $release_file
+if ! grep -qi "Arch" "$release_file"; then
 	echo "This script is for Arch Linux only."
 	exit 1
 fi
-echo "Arch LInux detected"
+echo "Arch Linux detected"
 
-
-# -- PACKAGES TO REMOVE --
+# --- PACKAGES TO REMOVE ---
 PACKAGES=(
 	hyprland
 	hyprpaper
 	hypridle
-	hyprlock stow
+	hyprlock 
+	stow
 	ttf-jetbrains-mono-nerd 
 	github-cli 
 	tmux 
 	neovim 
-	libreoffice 
+	libreoffice-fresh 
 	tree 
 	gimp 
 	qutebrowser 
 	zsh 
 	git 
 	unzip
-	brave
+	brave-bin
 )
 
-# -- EXECUTE REMOVAL ---
-if [ ${#PACKAGES[@]} -gt 0 ];
-then
+# --- EXECUTE REMOVAL ---
+if [ ${#PACKAGES[@]} -gt 0 ]; then
 	echo "Removing packages.."
-	run sudo pacman -Rns --noconfirm "${PACKAGES[@]}"
+	if [ "$DRY_RUN" = true ]; then
+		echo "[DRY-RUN] sudo pacman -Rns --noconfirm ${PACKAGES[*]}"
+	else
+		sudo pacman -Rns --noconfirm "${PACKAGES[@]}"
+	fi
 else
 	echo "No packages to remove.."
 fi
 
-# -- CONFIG CLEANUP ---
+# --- CONFIG CLEANUP ---
 echo "Removing user configs.."
-run rm -rf ~/.config/hypr
-run rm -rf ~/.oh-y-zsh
-run rm -rf ~/.zshrc
-run rm -rf ~/.local/share/fonts/JetBrainsMono*
+if [ "$DRY_RUN" = true ]; then
+	echo "[DRY-RUN] rm -rf ~/.config/hypr ~/.oh-my-zsh ~/.zshrc ~/.local/share/fonts/JetBrainsMono*"
+else
+	rm -rf ~/.config/hypr
+	rm -rf ~/.oh-my-zsh
+	rm -rf ~/.zshrc
+	rm -rf ~/.local/share/fonts/JetBrainsMono*
+fi
 
 # --- FONT CACHE ---
 echo "Rebuilding font cache.."
-run fc-cache -f
-check_exit_status
+if [ "$DRY_RUN" = true ]; then
+	echo "[DRY-RUN] fc-cache -f"
+else
+	fc-cache -f
+fi
 
 # --- ORPHAN CLEANUP ---
 echo "Removing orphaned packages.."
-run sudo pacman -Rns --noconfirm \$(pacman -Qtdq || true)
+if [ "$DRY_RUN" = true ]; then
+	echo "[DRY-RUN] sudo pacman -Rns --noconfirm \$(pacman -Qtdq)"
+else
+	# Uses || true so the script doesn't crash if there are no orphans
+	sudo pacman -Rns --noconfirm $(pacman -Qtdq) || true
+fi
 
 echo "Uninstall Finished." 
 echo "DRY_RUN=$DRY_RUN"
+
+
 
