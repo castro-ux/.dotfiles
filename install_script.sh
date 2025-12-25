@@ -50,13 +50,17 @@ fi
 # --- CONFIGURATION SETUP ---
 echo "Setting up user configs.."
 if [ "$DRY_RUN" = true ]; then
-    echo "[DRY-RUN] mkdir -p ~/.config/hypr ~/.oh-my-zsh ~/.local/share/fonts/JetBrainsMono && cp -rf ~/.dotfiles/* ~/.config/*";
-then
-	run stow hypr
-	run stow alacritty
+    echo "[DRY-RUN] mkdir -p ~/.config/hypr ~/.oh-my-zsh ~/.local/share/fonts/JetBrainsMono && cp -rf ~/.dotfiles/* ~/.config/*"
+    echo "[DRY-RUN] stow hypr"
+    echo "[DRY-RUN] stow alacritty"
 else
-	echo "check your stow config setup"
+    # Actual actions (without DRY-RUN)
+    mkdir -p ~/.config/hypr ~/.oh-my-zsh ~/.local/share/fonts/JetBrainsMono
+    cp -rf ~/.dotfiles/* ~/.config/
+    stow hypr
+    stow alacritty
 fi
+
 
 # --- FONT CACHE ---
 echo "Rebuilding font cache.."
