@@ -58,6 +58,24 @@ else
     echo "No packages to install.."
 fi
 
+# --- AUR INSTALLATION (BRAVE) ---
+echo "Checking for yay and Brave..."
+if command -v yay &>/dev/null; then
+    if yay -Q brave-bin &>/dev/null; then
+        echo "Brave is already installed."
+    else
+        echo "Installing Brave via yay..."
+        if [ "$DRY_RUN" = true ]; then
+            echo "[DRY-RUN] yay -Sy brave-bin --noconfirm"
+        else
+            yay -Sy brave-bin --noconfirm
+        fi
+    fi
+else
+    echo "Warning: 'yay' not found. Skipping Brave installation."
+fi
+
+
 # --- CONFIGURATION SETUP ---
 echo "Setting up user configs.."
 if [ "$DRY_RUN" = true ]; then
