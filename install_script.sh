@@ -2,7 +2,7 @@
 set -e
 
 # --- TOGGLE THIS TO RUN ---
-DRY_RUN=true # Set to false to actually install
+DRY_RUN=false  # Set to false to actually install
 
 # --- LOGGING ---
 release_file=/etc/os-release
@@ -33,7 +33,6 @@ PACKAGES=(
     zsh 
     git 
     unzip
-    brave-bin
 )
 
 # --- EXECUTE INSTALLATION ---
@@ -51,11 +50,12 @@ fi
 # --- CONFIGURATION SETUP ---
 echo "Setting up user configs.."
 if [ "$DRY_RUN" = true ]; then
-    echo "[DRY-RUN] mkdir -p ~/.config/hypr ~/.oh-my-zsh ~/.local/share/fonts/JetBrainsMono && cp /path/to/your/configs/* ~/.config/hypr/"
+    echo "[DRY-RUN] mkdir -p ~/.config/hypr ~/.oh-my-zsh ~/.local/share/fonts/JetBrainsMono && cp -rf ~/.dotfiles/* ~/.config/*";
+then
+	run stow hypr
+	run stow alacritty
 else
-    mkdir -p ~/.config/hypr ~/.oh-my-zsh ~/.local/share/fonts/JetBrainsMono
-    cp /path/to/your/configs/* ~/.config/hypr/
-    # You can modify this to copy specific config files or to clone repos, etc.
+	echo "check your stow config setup"
 fi
 
 # --- FONT CACHE ---

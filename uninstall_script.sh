@@ -2,7 +2,7 @@
 set -e
 
 # --- TOGGLE THIS TO RUN ---
-DRY_RUN=true # Set to false to actually uninstall
+DRY_RUN=false # Set to false to actually uninstall
 
 # --- LOGGING ---
 release_file=/etc/os-release
