@@ -62,15 +62,17 @@ fi
 echo "Setting up user configs.."
 if [ "$DRY_RUN" = true ]; then
     echo "[DRY-RUN] mkdir -p ~/.config/hypr ~/.oh-my-zsh ~/.local/share/fonts/JetBrainsMono && cp -rf ~/.dotfiles/* ~/.config/*"
-    echo "[DRY-RUN] stow hypr"
-    echo "[DRY-RUN] stow alacritty"
+    echo "[DRY-RUN] stow --ignore='README.md' hypr"
+    echo "[DRY-RUN] stow --ignore='README.md' alacritty"
 else
     # Actual actions (without DRY-RUN)
     mkdir -p ~/.config/hypr ~/.oh-my-zsh ~/.local/share/fonts/JetBrainsMono
     cp -rf ~/.dotfiles/hypr ~/.config/hypr
     cp -rf ~/.dotfiles/alacritty ~/.config/alacritty
-    stow hypr
-    stow alacritty
+    
+    # Use stow with --ignore to prevent README.md files from being stowed
+    stow --ignore='README.md' hypr
+    stow --ignore='README.md' alacritty
 fi
 
 
