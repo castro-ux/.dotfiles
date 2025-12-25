@@ -56,7 +56,8 @@ if [ "$DRY_RUN" = true ]; then
 else
     # Actual actions (without DRY-RUN)
     mkdir -p ~/.config/hypr ~/.oh-my-zsh ~/.local/share/fonts/JetBrainsMono
-    cp -rf ~/.dotfiles/* ~/.config/
+    cp -rf ~/.dotfiles/hypr ~/.config/hypr
+    cp -rf ~/.dotfiles/alacritty ~/.config/alacritty
     stow hypr
     stow alacritty
 fi
