@@ -24,7 +24,7 @@ fi
 # 2. Define the Cleanup Actions
 CLEANUP_COMMANDS=(
 "sudo chsh -s $(which bash) $USER"
-"$pkg_rm github-cli tmux neovim libreoffice tree gimp qutebrowser zsh git unzip fontconfig"
+"$pkg_rm hyprland ttf-jetbrains-mono-nerd github-cli tmux neovim libreoffice tree gimp qutebrowser zsh git unzip"
 "rm -rf $HOME/.oh-my-zsh $HOME/.zshrc $HOME/.local/share/fonts/JetBrainsMono*"
 "fc-cache -f"
 )

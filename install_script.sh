@@ -4,7 +4,7 @@
 TEST_MODE=false # Set to false to allow the script to actually run
 # ---------------------
 
-# 1. Detect Package Manager and Update System
+# 0. Detect Package Manager and Update System
 if command -v pacman &> /dev/null; 
 then
 distro_cmd="pacman"
@@ -22,6 +22,31 @@ pkg_ins="sudo apk add"
 sudo sed -i 's/#//g' /etc/apk/repositories
 update_cmd="sudo apk update && sudo apk upgrade"
 fi
+
+
+# 1. Arch-Specific: Hyprland & Stow Dotfiles
+if [ "$distro_cmd" = "pacman" ]; then
+if [ "$TEST_MODE" = false ]; then
+install_pkg "hyprlock"
+install_pkg "hyprpaper"
+install_pkg "hypridle"
+install_pkg "stow"
+
+DOT_DIR="$HOME/.dotfiles"
+if [ ! -d "$DOT_DIR" ]; then
+git clone https://github.com/castro-ux/.dotfiles "$DOT_DIR"
+fi
+
+# Stow logic: Symlinks repo files to config folders
+cd "$DOT_DIR" || exit
+stow .
+cd - || exit
+else
+echo "[DRY RUN] Would install hypr suite, clone dotfiles, and run 'stow .'"
+fi
+fi
+
+
 
 # 2. Universal Install Function with "Skip" Logic
 install_pkg() {
@@ -51,7 +76,7 @@ fi
 }
 
 # 3. Universal Packages (All Distros)
-APPS=(github-cli tmux neovim libreoffice tree gimp qutebrowser zsh git unzip fontconfig curl)
+APPS=(hyprland ttf-jetbrains-mono-nerd github-cli tmux neovim libreoffice tree gimp qutebrowser zsh git unzip curl)
 
 # 4. Confirmation Logic
 if [ "$TEST_MODE" = false ]; then
@@ -77,29 +102,6 @@ done
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
 else
 echo "[DRY RUN] Would update system and install: ${APPS[*]}"
-fi
-
-# 5. Arch-Specific: Hyprland & Stow Dotfiles
-if [ "$distro_cmd" = "pacman" ]; then
-if [ "$TEST_MODE" = false ]; then
-install_pkg "hyprlock"
-install_pkg "hyprpaper"
-install_pkg "hypridle"
-install_pkg "stow"
-install_pkg "ttf-jetbrains-mono-nerd"
-
-DOT_DIR="$HOME/.dotfiles"
-if [ ! -d "$DOT_DIR" ]; then
-git clone https://github.com/castro-ux/.dotfiles "$DOT_DIR"
-fi
-
-# Stow logic: Symlinks repo files to config folders
-cd "$DOT_DIR" || exit
-stow .
-cd - || exit
-else
-echo "[DRY RUN] Would install hypr suite, clone dotfiles, and run 'stow .'"
-fi
 fi
 
 # 6. Post-Install Configs (Nvim Relative Numbers & Shell)
