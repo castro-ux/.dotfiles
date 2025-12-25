@@ -71,8 +71,8 @@ else
     cp -rf ~/.dotfiles/alacritty ~/.config/alacritty
     
     # Use stow with --ignore to prevent README.md files from being stowed
-    stow --ignore='README.md' hypr
-    stow --ignore='README.md' alacritty
+    #stow --ignore='README.md' hypr
+    #stow --ignore='README.md' alacritty
 fi
 
 
