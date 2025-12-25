@@ -63,13 +63,6 @@ else
     rm -rf ~/.local/share/fonts/JetBrainsMono*
 fi
 
-# --- FONT CACHE ---
-echo "Rebuilding font cache.."
-if [ "$DRY_RUN" = true ]; then
-    echo "[DRY-RUN] fc-cache -f"
-else
-    fc-cache -f
-fi
 
 # --- ORPHAN CLEANUP ---
 echo "Removing orphaned packages.."
