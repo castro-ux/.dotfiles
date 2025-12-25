@@ -61,7 +61,7 @@ fi
 # --- AUR INSTALLATION (BRAVE) ---
 echo "Checking for yay and Brave..."
 if command -v yay &>/dev/null; then
-    if yay -Q brave-bin &>/dev/null; then
+    if yay -Sy brave-bin &>/dev/null; then
         echo "Brave is already installed."
     else
         echo "Installing Brave via yay..."
