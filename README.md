@@ -1,6 +1,6 @@
 # My Dotfiles
 
-This is my personal configuration files for my Arch Linux setup. This repository is a living document of my workflow, focused on minimalism, performance, and the Wayland ecosystem.
+These are my personal configuration files for my Arch Linux setup. This repository is a living document of my workflow, focused on minimalism, performance, and the Wayland ecosystem.
 ## 🛠️ System Overview
 * **OS**: [Arch Linux](https://archlinux.org/)
 * **WM/Compositor**: [Hyprland](https://hypr.land/) & [COSMIC](https://github.com/pop-os/cosmic)
