@@ -1,72 +1,68 @@
-!/bin/bash
+#!/bin/bash
+set -e
 
 # --- TOGGLE THIS TO RUN ---
-TEST_MODE=false # Set to false to actually perform the uninstall
-# --------------------------
+DRY_RUN=true #set to false to actually uninstall
 
-# 1. Detect Package Manager
-if command -v pacman &> /dev/null;
-then
-distro_cmd="pacman"
-pkg_rm="sudo pacman -Rns --noconfirm"
+# --- LOGGING ---
+release_file=/etc/os-release
+# logfile=/var/log/uninstaller.log
+# errorlog=/var/log/uninstaller_errors.log
 
-elif command -v apt &> /dev/null; 
+#Detect OS
+if grep -qi "Arch" "$release";
 then
-distro_cmd="apt"
-pkg_rm="sudo apt purge -y"
-
-elif command -v apk &> /dev/null; 
-then
-distro_cmd="apk"
-pkg_rm="sudo apk del"
+	echo "This script is for Arch Linux only."
+	exit 1
 fi
+echo "Arch LInux detected"
 
-# 2. Define the Cleanup Actions
-CLEANUP_COMMANDS=(
-"sudo chsh -s $(which bash) $USER"
-"$pkg_rm hyprland ttf-jetbrains-mono-nerd github-cli tmux neovim libreoffice tree gimp qutebrowser zsh git unzip"
-"rm -rf $HOME/.oh-my-zsh $HOME/.zshrc $HOME/.local/share/fonts/JetBrainsMono*"
-"fc-cache -f"
+
+# -- PACKAGES TO REMOVE --
+PACKAGES=(
+	hyprland
+	hyprpaper
+	hypridle
+	hyprlock stow
+	ttf-jetbrains-mono-nerd 
+	github-cli 
+	tmux 
+	neovim 
+	libreoffice 
+	tree 
+	gimp 
+	qutebrowser 
+	zsh 
+	git 
+	unzip
+	brave
 )
 
-# 3. Remove Hyprland Specifics
-if [ "$distro_cmd" = "pacman" ]; then
-CLEANUP_COMMANDS+=(
-"$pkg_rm hyprland hyprlock hyprpaper hypridle stow"
-"rm -rf $HOME/.config/hypr $HOME/.cache/hyprland $HOME/.local/share/hyprland $HOME/.dotfiles"
-"pacman -Qs hypr && echo 'success hyprland fully uninstalled'"
-)
-fi
-
-# 4. Confirmation Logic
-if [  "$TEST_MODE" = false ]; 
+# -- EXECUTE REMOVAL ---
+if [ ${#PACKAGES[@]} -gt 0 ];
 then
-	echo "!!! WARNING!!!"
-	echo "You're about to uninstall all your dotfiles and configurations."
-	echo "The following commands will be executed:"
-	for cmd in "${CLEANUP_COMMANDS[ @ ]}"; do echo
-		"  -> $cmd"; done
-
-	echo -n "Are you absolutely sure you want to proceed? (type 'yes' to continue): "
-	read -r confirmation
-	if [  "$confirmation" != "yes"  ]; then 
-		echo "Uninstall ancelled."
-		exit 0
-	fi
-fi
-
-# 5. The Execution Loop
-echo "--- UNINSTALL LOG (Test Mode: $TEST_MODE) ---"
-
-for cmd in "${CLEANUP_COMMANDS[@]}"; 
-do
-if [ "$TEST_MODE" = true ]; 
-then
-echo "[WILL RUN]: $cmd"
+	echo "Removing packages.."
+	run sudo pacman -Rns --noconfirm "${PACKAGES[@]}"
 else
-echo "[EXECUTING]: $cmd"
-eval "$cmd"
+	echo "No packages to remove.."
 fi
-done
 
-echo "--- Finished ---"
+# -- CONFIG CLEANUP ---
+echo "Removing user configs.."
+run rm -rf ~/.config/hypr
+run rm -rf ~/.oh-y-zsh
+run rm -rf ~/.zshrc
+run rm -rf ~/.local/share/fonts/JetBrainsMono*
+
+# --- FONT CACHE ---
+echo "Rebuilding font cache.."
+run fc-cache -f
+check_exit_status
+
+# --- ORPHAN CLEANUP ---
+echo "Removing orphaned packages.."
+run sudo pacman -Rns --noconfirm \$(pacman -Qtdq || true)
+
+echo "Uninstall Finished." 
+echo "DRY_RUN=$DRY_RUN"
+
