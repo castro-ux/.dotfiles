@@ -66,13 +66,13 @@ if [ "$DRY_RUN" = true ]; then
     echo "[DRY-RUN] stow --ignore='README.md' alacritty"
 else
     # Actual actions (without DRY-RUN)
-    mkdir -p ~/.config/hypr ~/.oh-my-zsh ~/.local/share/fonts/JetBrainsMono
+    mkdir -p ~/.config/hypr ~/.config/alacritty
     #cp -rf ~/.dotfiles/hypr ~/.config/hypr
     #cp -rf ~/.dotfiles/alacritty ~/.config/alacritty
     
     # Use stow with --ignore to prevent README.md files from being stowed
-    stow --ignore='README.md' hypr
-    stow --ignore='README.md' alacritty
+    stow hypr
+    stow alacritty
 fi
 
 
