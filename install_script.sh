@@ -2,13 +2,12 @@
 set -e
 
 # --- TOGGLE THIS TO RUN ---
-DRY_RUN=false  # Set to false to actually install
+DRY_RUN=false  #set to false to install
 
 # --- LOGGING ---
 release_file=/etc/os-release
 
 # --- DETECT OS ---
-# Fixed: Added '!' (not) and changed $release to $release_file
 if ! grep -qi "Arch" "$release_file"; then
     echo "This script is for Arch Linux only."
     exit 1
@@ -17,120 +16,63 @@ echo "Arch Linux detected"
 
 # --- PACKAGES TO INSTALL ---
 PACKAGES=(
-    hyprland
-    hyprpaper
-    hypridle
-    hyprlock 
-    stow
-    ttf-jetbrains-mono-nerd 
-    github-cli 
-    tmux 
-    neovim 
-    libreoffice-fresh 
-    tree 
-    gimp 
-    qutebrowser 
-    zsh 
-    git 
-    unzip
+    hyprland hyprpaper hypridle hyprlock stow 
+    ttf-jetbrains-mono-nerd github-cli tmux neovim 
+    libreoffice-fresh tree gimp qutebrowser zsh git unzip
 )
 
-# --- CHECK IF PACKAGES ARE INSTALLED ---
-echo "Checking installed packages..."
+# --- CHECK AND INSTALL PACKAGES ---
+packages_to_install=()
 for package in "${PACKAGES[@]}"; do
-    if pacman -Q "$package" &>/dev/null; then
-        echo "Package '$package' is already installed. Skipping."
-    else
-        echo "Package '$package' is not installed. Will install."
+    if ! pacman -Q "$package" &>/dev/null; then
         packages_to_install+=("$package")
     fi
 done
 
-# --- EXECUTE INSTALLATION ---
-if [ ${#PACKAGES[@]} -gt 0 ]; then
-    echo "Installing packages.."
+if [ ${#packages_to_install[@]} -gt 0 ]; then
     if [ "$DRY_RUN" = true ]; then
-        echo "[DRY-RUN] sudo pacman -S --noconfirm ${PACKAGES[*]}"
+        echo "[DRY-RUN] sudo pacman -S --noconfirm ${packages_to_install[*]}"
     else
-        sudo pacman -S --noconfirm "${PACKAGES[@]}"
+        sudo pacman -S --noconfirm "${packages_to_install[@]}"
     fi
-else
-    echo "No packages to install.."
 fi
 
 # --- AUR INSTALLATION (BRAVE) ---
-echo "Checking for yay and Brave..."
 if command -v yay &>/dev/null; then
-    if yay -Sy brave-bin &>/dev/null; then
-        echo "Brave is already installed."
-    else
-        echo "Installing Brave via yay..."
+    if ! pacman -Q brave-bin &>/dev/null; then
         if [ "$DRY_RUN" = true ]; then
-            echo "[DRY-RUN] yay -Sy brave-bin --noconfirm"
+            echo "[DRY-RUN] yay -S brave-bin --noconfirm"
         else
-            yay -Sy brave-bin --noconfirm
+            yay -S brave-bin --noconfirm
         fi
     fi
-else
-    echo "Warning: 'yay' not found. Skipping Brave installation."
 fi
 
-
---- CONFIGURATION SETUP ---
-# Ensure we are in the dotfiles directory
-cd ~/.dotfiles
-
+# --- CONFIGURATION SETUP (STOW) ---
 echo "Setting up user configs with GNU Stow..."
 
-if [ "$DRY_RUN" = true ]; then
-    echo "[DRY-RUN] stow -vt ~ hypr"
-    echo "[DRY-RUN] stow -vt ~ alacritty"
+if [ -d "$HOME/.dotfiles" ]; then
+    cd "$HOME/.dotfiles"
+    
+    if [ "$DRY_RUN" = true ]; then
+        echo "[DRY-RUN] stow -vRt ~ hypr"
+        echo "[DRY-RUN] stow -vRt ~ alacritty"
+    else
+        # Optional: Uncomment the next line ONCE if you want the script to clear the old mess for you
+        # rm -rf ~/.config/hypr ~/.config/alacritty 
+
+        mkdir -p ~/.config
+        stow -vRt ~ hypr
+        stow -vRt ~ alacritty
+        echo "Symlinks created successfully."
+    fi
 else
-    # 1. Ensure the parent .config exists (Stow needs a base to hook into)
-    mkdir -p ~/.config
-    
-    # 2. Use stow with the -R (restow) flag. 
-    # This unlinks old links and creates new ones, which helps fix "messes".
-    # -v: Verbose (tells you what it's doing)
-    # -t ~: Targets the home directory explicitly
-    
-    stow -vRt ~ hypr
-    stow -vRt ~ alacritty
+    echo "Error: ~/.dotfiles directory not found."
 fi
 
-
-
 # --- FONT CACHE ---
-echo "Rebuilding font cache.."
-if [ "$DRY_RUN" = true ]; then
-    echo "[DRY-RUN] fc-cache -f"
-else
+if [ "$DRY_RUN" != true ]; then
     fc-cache -f
 fi
 
-# --- CONFIGURATION SETUP ---
-echo "Setting up user configs.."
-if [ "$DRY_RUN" = true ]; then
-    echo "[DRY-RUN] mkdir -p ~/.config/hypr ~/.oh-my-zsh ~/.local/share/fonts/JetBrainsMono && cp -rf ~/.dotfiles/* ~/.config/*"
-    echo "[DRY-RUN] stow hypr"
-    echo "[DRY-RUN] stow alacritty"
-else
-    # Actual actions (without DRY-RUN)
-    mkdir -p ~/.config/hypr ~/.oh-my-zsh ~/.local/share/fonts/JetBrainsMono
-    cp -rf ~/.dotfiles/hypr/.config/. ~/.config/hypr
-    cp -rf ~/.dotfiles/alacritty/.config/. ~/.config/alacritty
-    stow hypr
-    stow alacritty
-fi
-
-# --- CLEANUP ---
-echo "Cleaning up unnecessary packages.."
-if [ "$DRY_RUN" = true ]; then
-    echo "[DRY-RUN] sudo pacman -Rns --noconfirm \$(pacman -Qtdq)"
-else
-    # Uses || true so the script doesn't crash if there are no orphans
-    sudo pacman -Rns --noconfirm $(pacman -Qtdq) || true
-fi
-
-echo "Install Finished." 
-echo "DRY_RUN=$DRY_RUN"
+echo "Install Finished. DRY_RUN=$DRY_RUN"
