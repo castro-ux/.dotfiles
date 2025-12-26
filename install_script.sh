@@ -45,20 +45,24 @@ if [ -d "$HOME/.dotfiles" ]; then
     cd "$HOME/.dotfiles"
     
     if [ "$DRY_RUN" = true ]; then
+        echo "[DRY-RUN] rm -rf ~/.config/hypr ~/.config/alacritty"
         echo "[DRY-RUN] stow -vRt ~ hypr"
         echo "[DRY-RUN] stow -vRt ~ alacritty"
     else
-        # Optional: Uncomment the next line ONCE if you want the script to clear the old mess for you
-        # rm -rf ~/.config/hypr ~/.config/alacritty 
+        # 1. Clear existing physical folders to prevent "Operation aborted" errors
+        rm -rf ~/.config/hypr ~/.config/alacritty 
 
+        # 2. Ensure parent exists and stow
         mkdir -p ~/.config
         stow -vRt ~ hypr
         stow -vRt ~ alacritty
+        
         echo "Symlinks created successfully."
     fi
 else
     echo "Error: ~/.dotfiles directory not found."
 fi
+
 
 # --- FONT CACHE ---
 if [ "$DRY_RUN" != true ]; then
