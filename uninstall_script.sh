@@ -57,6 +57,7 @@ else
     rm -rf ~/.config/hypr
     rm -rf ~/.oh-my-zsh
     rm -rf ~/.zshrc
+    rm -rf ~/.bashrc
     rm -rf ~/.local/share/fonts/JetBrainsMono*
 fi
 

@@ -2,7 +2,7 @@
 set -e
 
 # --- TOGGLE THIS TO RUN ---
-DRY_RUN=false  #set to false to install
+DRY_RUN=true  #set to false to install
 
 # --- LOGGING ---
 release_file=/etc/os-release
@@ -19,7 +19,7 @@ PACKAGES=(
     alacritty hyprpaper hypridle hyprlock stow 
     ttf-jetbrains-mono-nerd 
     github-cli tmux neovim 
-    tree gimp qutebrowser zsh unzip
+    tree gimp qutebrowser zsh unzip 
 )
 
 # --- CHECK AND INSTALL PACKAGES ---
@@ -38,30 +38,43 @@ if [ ${#packages_to_install[@]} -gt 0 ]; then
     fi
 fi
 
-# --- CONFIGURATION SETUP (STOW) ---
-echo "Setting up user configs with GNU Stow..."
 
-if [ -d "$HOME/.dotfiles" ]; then
-    cd "$HOME/.dotfiles"
+# --- MANUAL SYMLINKS FOR EXISTING CONFIGS ---
+echo "Setting up manual symlinks.."
+
+ln -sf ".dotfiles/hypr/.config/hypr" "$XDG_CONFIG_HOME"/hypr
+ln -sf ".dotfiles/alacritty/.config/alacritty" "$XDG_CONFIG_HOME"/alacritty
+ln -sf ".dotfiles/zshrc/.zshrc" "$XDG_CONFIG_HOME"/.zshrc
+ln -sf ".dotfiles/bashrc/.bashrc" "$XDG_CONFIG_HOME"/.bashrc
+ln -sf ".dotfiles/oh-my-zsh/.oh-my-zsh.sh" "$XDG_CONFIG_HOME"/oh-my-zsh/oh-my-zsh.sh
+
+echo "Symlinks created successfully."
+
+
+# # --- CONFIGURATION SETUP (STOW) ---
+# echo "Setting up user configs with GNU Stow..."
+
+# if [ -d "$HOME/.dotfiles" ]; then
+#     cd "$HOME/.dotfiles"
     
-    if [ "$DRY_RUN" = true ]; then
-        echo "[DRY-RUN] rm -rf ~/.config/hypr ~/.config/alacritty"
-        echo "[DRY-RUN] stow -vRt ~ hypr"
-        echo "[DRY-RUN] stow -vRt ~ alacritty"
-    else
-        # 1. Clear existing physical folders to prevent "Operation aborted" errors
-        rm -rf ~/.config/hypr ~/.config/alacritty 
+#     if [ "$DRY_RUN" = true ]; then
+#         echo "[DRY-RUN] rm -rf ~/.config/hypr ~/.config/alacritty"
+#         echo "[DRY-RUN] stow -vRt ~ hypr"
+#         echo "[DRY-RUN] stow -vRt ~ alacritty"
+#     else
+#         # 1. Clear existing physical folders to prevent "Operation aborted" errors
+#         rm -rf ~/.config/hypr ~/.config/alacritty 
 
-        # 2. Ensure parent exists and stow
-        mkdir -p ~/.config
-        stow -vRt ~ hypr
-        stow -vRt ~ alacritty
+#         # 2. Ensure parent exists and stow
+#         mkdir -p ~/.config
+#         stow -vRt ~ hypr
+#         stow -vRt ~ alacritty
         
-        echo "Symlinks created successfully."
-    fi
-else
-    echo "Error: ~/.dotfiles directory not found."
-fi
+#         echo "Symlinks created successfully."
+#     fi
+# else
+#     echo "Error: ~/.dotfiles directory not found."
+# fi
 
 
 # --- FONT CACHE ---
