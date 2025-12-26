@@ -37,17 +37,6 @@ if [ ${#packages_to_install[@]} -gt 0 ]; then
     fi
 fi
 
-# --- AUR INSTALLATION (BRAVE) ---
-if command -v yay &>/dev/null; then
-    if ! pacman -Q brave-bin &>/dev/null; then
-        if [ "$DRY_RUN" = true ]; then
-            echo "[DRY-RUN] yay -S brave-bin --noconfirm"
-        else
-            yay -S brave-bin --noconfirm
-        fi
-    fi
-fi
-
 # --- CONFIGURATION SETUP (STOW) ---
 echo "Setting up user configs with GNU Stow..."
 
