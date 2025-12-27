@@ -47,12 +47,10 @@ mkdir -p "$XDG_CONFIG_HOME"
 # --- MANUAL SYMLINKS FOR EXISTING CONFIGS ---
 echo "Setting up manual symlinks..."
 
-
-# Configs going into ~/.config/
+# Original Configs going into ~/.config/
 # Using -sf (s: symbolic, f: force/overwrite)
-ln -sf "$HOME/.dotfiles/.config/hypr" "$XDG_CONFIG_HOME/"
-ln -sf "$HOME/.dotfiles/.config/alacritty" "$XDG_CONFIG_HOME/"
-ln -sf "$HOME/.dotfiles/.config/nvim" "$XDG_CONFIG_HOME/"
+ln -sf "$HOME/.dotfiles/hypr/.config/hypr" "$XDG_CONFIG_HOME/"
+ln -sf "$HOME/.dotfiles/alacritty/.config/alacritty" "$XDG_CONFIG_HOME/"
 
 # Shell configs going into ~/ (Home)
 ln -sf "$HOME/.dotfiles/zshrc/.zshrc" "$HOME/.zshrc"
@@ -63,23 +61,6 @@ mkdir -p "$XDG_CONFIG_HOME/oh-my-zsh"
 ln -sf "$HOME/.dotfiles/oh-my-zsh/.oh-my-zsh.sh" "$XDG_CONFIG_HOME/oh-my-zsh/oh-my-zsh.sh"
 
 echo "Symlinks created successfully."
-
-#
-# # Original Configs going into ~/.config/
-# # Using -sf (s: symbolic, f: force/overwrite)
-# ln -sf "$HOME/.dotfiles/hypr/.config/hypr" "$XDG_CONFIG_HOME/"
-# ln -sf "$HOME/.dotfiles/alacritty/.config/alacritty" "$XDG_CONFIG_HOME/"
-#
-# # Shell configs going into ~/ (Home)
-# ln -sf "$HOME/.dotfiles/zshrc/.zshrc" "$HOME/.zshrc"
-# ln -sf "$HOME/.dotfiles/bashrc/.bashrc" "$HOME/.bashrc"
-#
-# # Oh-My-Zsh setup
-# mkdir -p "$XDG_CONFIG_HOME/oh-my-zsh"
-# ln -sf "$HOME/.dotfiles/oh-my-zsh/.oh-my-zsh.sh" "$XDG_CONFIG_HOME/oh-my-zsh/oh-my-zsh.sh"
-#
-# echo "Symlinks created successfully."
-#
 
 
 # # --- CONFIGURATION SETUP (STOW) ---
