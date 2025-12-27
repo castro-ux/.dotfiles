@@ -51,6 +51,12 @@ for PACKAGE in "${PACKAGES[@]}"; do
     fi
 done
 
+# --- AUR REMOVAL ---
+sudo pacman -Rns --noconfirm yay
+echo "Removing yay cache"
+rm -rf ~/.config/yay
+rm -rf ~/.cache/yay
+
 # --- CONFIG CLEANUP ---
 echo "Removing user configs.."
 if [ "$DRY_RUN" = true ]; then
