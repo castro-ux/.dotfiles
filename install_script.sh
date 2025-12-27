@@ -51,6 +51,7 @@ echo "Setting up manual symlinks..."
 # Using -sf (s: symbolic, f: force/overwrite)
 ln -sf "$HOME/.dotfiles/hypr/.config/hypr" "$XDG_CONFIG_HOME/"
 ln -sf "$HOME/.dotfiles/alacritty/.config/alacritty" "$XDG_CONFIG_HOME/"
+ln -sf "$HOME/.dotfiles/nvim/.config/nvim" "$XDG_CONFIG_HOME/"
 
 # Shell configs going into ~/ (Home)
 ln -sf "$HOME/.dotfiles/zshrc/.zshrc" "$HOME/.zshrc"
