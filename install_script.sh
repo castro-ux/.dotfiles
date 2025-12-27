@@ -2,7 +2,7 @@
 set -e
 
 # --- TOGGLE THIS TO RUN ---
-DRY_RUN=true  #set to false to install
+DRY_RUN=false  #set to false to install
 
 # --- LOGGING ---
 release_file=/etc/os-release
