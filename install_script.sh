@@ -22,10 +22,6 @@ PACKAGES=(
     tree gimp qutebrowser zsh unzip 
     dolphin dmenu
     )
-    
-# --- AUR TO INSTALL ---
-sudo pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin && makepkg -si
-yay -S --noconfirm brave-bin
 
 # --- CHECK AND INSTALL PACKAGES ---
 packages_to_install=()
