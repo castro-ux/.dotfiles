@@ -39,16 +39,28 @@ if [ ${#packages_to_install[@]} -gt 0 ]; then
 fi
 
 
-# --- MANUAL SYMLINKS FOR EXISTING CONFIGS ---
-echo "Setting up manual symlinks.."
+# Ensure the base config directory exists first
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+mkdir -p "$XDG_CONFIG_HOME"
 
-ln -sf ".dotfiles/hypr/.config/hypr" "$XDG_CONFIG_HOME"/hypr
-ln -sf ".dotfiles/alacritty/.config/alacritty" "$XDG_CONFIG_HOME"/alacritty
-ln -sf ".dotfiles/zshrc/.zshrc" "$XDG_CONFIG_HOME"/.zshrc
-ln -sf ".dotfiles/bashrc/.bashrc" "$XDG_CONFIG_HOME"/.bashrc
-ln -sf ".dotfiles/oh-my-zsh/.oh-my-zsh.sh" "$XDG_CONFIG_HOME"/oh-my-zsh/oh-my-zsh.sh
+# --- MANUAL SYMLINKS FOR EXISTING CONFIGS ---
+echo "Setting up manual symlinks..."
+
+# Configs going into ~/.config/
+# Using -sf (s: symbolic, f: force/overwrite)
+ln -sf "$HOME/.dotfiles/hypr/.config/hypr" "$XDG_CONFIG_HOME/"
+ln -sf "$HOME/.dotfiles/alacritty/.config/alacritty" "$XDG_CONFIG_HOME/"
+
+# Shell configs going into ~/ (Home)
+ln -sf "$HOME/.dotfiles/zshrc/.zshrc" "$HOME/.zshrc"
+ln -sf "$HOME/.dotfiles/bashrc/.bashrc" "$HOME/.bashrc"
+
+# Oh-My-Zsh setup
+mkdir -p "$XDG_CONFIG_HOME/oh-my-zsh"
+ln -sf "$HOME/.dotfiles/oh-my-zsh/.oh-my-zsh.sh" "$XDG_CONFIG_HOME/oh-my-zsh/oh-my-zsh.sh"
 
 echo "Symlinks created successfully."
+
 
 
 # # --- CONFIGURATION SETUP (STOW) ---
