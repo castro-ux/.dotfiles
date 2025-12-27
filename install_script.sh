@@ -16,7 +16,7 @@ echo "Arch Linux detected"
 
 # --- PACKAGES TO INSTALL ---
 PACKAGES=(
-    alacritty hyprpaper hypridle hyprlock stow 
+    hyprland alacritty hyprpaper hypridle hyprlock stow 
     ttf-jetbrains-mono-nerd 
     github-cli tmux neovim 
     tree gimp qutebrowser zsh unzip 
