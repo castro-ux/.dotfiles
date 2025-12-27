@@ -32,7 +32,7 @@ PACKAGES=(
     qutebrowser 
     zsh 
     unzip
-    dmenu dolphin
+    dmenu dolphin brave-bin
 )
 
 # --- EXECUTE REMOVAL ---
