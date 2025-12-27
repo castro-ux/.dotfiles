@@ -17,6 +17,7 @@ echo "Arch Linux detected"
 
 # --- PACKAGES TO REMOVE ---
 PACKAGES=(
+    hyprland
     hyprpaper
     hypridle
     hyprlock 
