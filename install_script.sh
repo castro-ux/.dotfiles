@@ -21,6 +21,7 @@ PACKAGES=(
     github-cli tmux neovim 
     tree gimp qutebrowser zsh unzip 
     dolphin dmenu
+    sudo pacman -S --needed git base-devel && git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin && makepkg -si
 )
 
 # --- CHECK AND INSTALL PACKAGES ---
