@@ -32,6 +32,7 @@ PACKAGES=(
     qutebrowser 
     zsh 
     unzip
+    dmenu dolphin
 )
 
 # --- EXECUTE REMOVAL ---

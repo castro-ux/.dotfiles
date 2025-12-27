@@ -20,6 +20,7 @@ PACKAGES=(
     ttf-jetbrains-mono-nerd 
     github-cli tmux neovim 
     tree gimp qutebrowser zsh unzip 
+    dolphin dmenu
 )
 
 # --- CHECK AND INSTALL PACKAGES ---
