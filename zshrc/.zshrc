@@ -115,6 +115,7 @@ alias battery="acpi -b"
 alias obsidian="cd ~/obsidian"
 alias nweb=" cd ~/projects/website/dist"
 alias vi="nvim"
+alias dot="cd ~/.dotfiles"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
