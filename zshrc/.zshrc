@@ -112,7 +112,7 @@ export PATH="usr/local/bin:$PATH"
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias battery="acpi -b"
-alias obsidian="cd ~/Documents/obsidian"
+alias obsidian="cd ~/obsidian"
 alias nweb=" cd ~/projects/website/dist"
 alias vi="nvim"
 
