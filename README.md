@@ -1,4 +1,4 @@
-# .dotfiles
+# dotfiles
 
 A minimal, portable dotfiles setup focused on **clarity, control, and portability**.
 
@@ -9,9 +9,9 @@ This repository contains my personal configuration files for Linux, organized to
 ## Philosophy
 
 - **Understand before you automate**
-- Prefer **simple, explicit symlinks**
-- Keep configs **version controlled**
-- Allow an easy path to scale with **GNU Stow**
+- Prefer simple, explicit symlinks
+- Keep configs version controlled
+- Allow an easy path to scale with GNU Stow
 
 There are many dotfiles repos online. This one prioritizes learning how things work under the hood rather than blindly copying configurations.
 
